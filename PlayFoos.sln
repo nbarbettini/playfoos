@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFoos.Engine", "PlayFoos.Engine\PlayFoos.Engine.csproj", "{2324AA9B-F763-4904-8ECD-298FAACAEC58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFoos.API", "PlayFoos.API\PlayFoos.API.csproj", "{B3E27CCD-7768-4A92-93E0-B8FD0E1691B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFoos.API.Tests", "PlayFoos.API.Tests\PlayFoos.API.Tests.csproj", "{958A6785-3B27-44AC-A780-A3FE573BB969}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFoos.Core", "PlayFoos.Core\PlayFoos.Core.csproj", "{5C0B5A66-5B5D-427C-9C40-EBCB85357ADD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFoos.Web", "PlayFoos.Web\PlayFoos.Web.csproj", "{8AEC08F0-9536-452B-A8D6-040483CBA5B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayFoos.Web.Tests", "PlayFoos.Web.Tests\PlayFoos.Web.Tests.csproj", "{BD1556AF-2EC3-4EBB-AF46-9DDECFC91FC2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2324AA9B-F763-4904-8ECD-298FAACAEC58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2324AA9B-F763-4904-8ECD-298FAACAEC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2324AA9B-F763-4904-8ECD-298FAACAEC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2324AA9B-F763-4904-8ECD-298FAACAEC58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3E27CCD-7768-4A92-93E0-B8FD0E1691B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3E27CCD-7768-4A92-93E0-B8FD0E1691B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3E27CCD-7768-4A92-93E0-B8FD0E1691B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3E27CCD-7768-4A92-93E0-B8FD0E1691B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{958A6785-3B27-44AC-A780-A3FE573BB969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{958A6785-3B27-44AC-A780-A3FE573BB969}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{958A6785-3B27-44AC-A780-A3FE573BB969}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C0B5A66-5B5D-427C-9C40-EBCB85357ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C0B5A66-5B5D-427C-9C40-EBCB85357ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C0B5A66-5B5D-427C-9C40-EBCB85357ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C0B5A66-5B5D-427C-9C40-EBCB85357ADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AEC08F0-9536-452B-A8D6-040483CBA5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AEC08F0-9536-452B-A8D6-040483CBA5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AEC08F0-9536-452B-A8D6-040483CBA5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AEC08F0-9536-452B-A8D6-040483CBA5B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD1556AF-2EC3-4EBB-AF46-9DDECFC91FC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD1556AF-2EC3-4EBB-AF46-9DDECFC91FC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD1556AF-2EC3-4EBB-AF46-9DDECFC91FC2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

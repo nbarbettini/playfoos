@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>PlayFoos Web Client Test</title>
+    <script src="Scripts/jquery-1.6.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="http://localhost/playfoos/api/signalr/hubs"></script>
+</head>
+<body>
+    <div id="state">
+        <div>Game ID: <span id="gameId"></span></div>
+        <div><span id="started">Game is not started</span></div>
+        <div>Starting at: <span id="startTime"></span></div>
+    </div>
+
+    <script>
+        var updateHubProxy = $.connection.gameStateHub;
+        updateHubProxy.client.updateGameState = function (state) {
+            console.log(state);
+            $('#gameId').text(state.Id);
+            $('#started').text(state.Started);
+            $('#startTime').text(state.StartTime);
+        };
+        $.connection.hub.start()
+            .done(function () { console.log('Connected! ID=' + $.connection.hub.id); });
+    </script>
+</body>
+</html>
