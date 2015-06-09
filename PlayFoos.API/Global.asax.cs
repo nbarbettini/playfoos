@@ -21,15 +21,16 @@ namespace PlayFoos.API
             IHubProxy _hub;
             var connection = new HubConnection(@"http://localhost:8080/");
             _hub = connection.CreateHubProxy("NotifyHub");
-            connection.Start().Wait();
+            connection.Start();
 
             IHubContext _hubContext;
             _hubContext = GlobalHost.ConnectionManager.GetHubContext<GameStateHub>();
 
-            _hub.On<GameStateDto>("UpdateGameState", state => {
-                // Push to all connected clients
-                _hubContext.Clients.All.UpdateGameState(state);
-            });
+            throw new NotImplementedException();
+            //_hub.On<GameStateDto>("UpdateGameState", state => {
+            //    // Push to all connected clients
+            //    _hubContext.Clients.All.UpdateGameState(state);
+            //});
         }
     }
 }
