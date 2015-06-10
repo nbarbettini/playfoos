@@ -13,7 +13,7 @@ namespace PlayFoos.Core.Tests
         [TestInitialize]
         public void Setup()
         {
-            _service = new GameLogicService();
+            _service = new GameLogicService(new EloRatingCalculatorService());
         }
 
         [TestMethod]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,13 @@ namespace PlayFoos.Core.Model
 {
     public class PlayerActive : IEquatable<PlayerActive>, IDeepClonable<PlayerActive>
     {
+        [BsonId]
         public Guid Id { get; set; }
+
+        [BsonElement("n")]
         public string Name { get; set; }
+
+        [BsonElement("r")]
         public int Rating { get; set; }
 
         // Default constructor

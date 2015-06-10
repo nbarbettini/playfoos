@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PlayFoos.Core.Model
 {
-    public class Game : IEquatable<Game>, IDeepClonable<Game>
+    public class GameCompleted : IEquatable<GameCompleted>, IDeepClonable<GameCompleted>
     {
         [BsonId]
         public Guid Id { get; set; }
@@ -15,8 +15,14 @@ namespace PlayFoos.Core.Model
         [BsonElement("createdAt")]
         public DateTime Created { get; set; }
 
-        [BsonElement("startedAt")]
-        public DateTime? Started { get; set; }
+        [BsonElement("startAt")]
+        public DateTime Started { get; set; }
+
+        [BsonElement("doneAt")]
+        public DateTime Ended { get; set; }
+
+        [BsonElement("len")]
+        public TimeSpan Duration { get; set; }
 
         [BsonElement("bScore")]
         public int ScoreBlack { get; set; }
@@ -24,49 +30,52 @@ namespace PlayFoos.Core.Model
         [BsonElement("yScore")]
         public int ScoreYellow { get; set; }
 
+        [BsonElement("bWins")]
+        public bool BlackWon { get; set; }
+
         [BsonElement("bPlayers")]
-        public List<PlayerActive> PlayersBlack { get; set; }
+        public List<PlayerHistorical> PlayersBlack { get; set; }
 
         [BsonElement("yPlayers")]
-        public List<PlayerActive> PlayersYellow { get; set; }
+        public List<PlayerHistorical> PlayersYellow { get; set; }
 
         // Default constructor
-        public Game()
+        public GameCompleted()
         {
             Id = Guid.NewGuid();
             Created = DateTime.Now;
 
-            PlayersBlack = new List<PlayerActive>();
-            PlayersYellow = new List<PlayerActive>();
+            PlayersBlack = new List<PlayerHistorical>();
+            PlayersYellow = new List<PlayerHistorical>();
         }
 
         #region IEquatable
 
-        public bool Equals(Game other)
+        public bool Equals(GameCompleted other)
         {
-            return this.Equals((object)other);
+            return Equals((object)other);
         }
 
         public override bool Equals(object obj)
         {
-            var other = obj as Game;
+            var other = obj as GameCompleted;
             if (obj == null)
                 return false;
 
-            return new GameEqualityComparer().Equals(this, other);
+            return new GameCompletedEqualityComparer().Equals(this, other);
         }
 
         public override int GetHashCode()
         {
-            return new GameEqualityComparer().GetHashCode(this);
+            return new GameCompletedEqualityComparer().GetHashCode(this);
         }
 
-        public static bool operator ==(Game x, Game y)
+        public static bool operator ==(GameCompleted x, GameCompleted y)
         {
-            return new GameEqualityComparer().Equals(x, y);
+            return new GameCompletedEqualityComparer().Equals(x, y);
         }
 
-        public static bool operator !=(Game x, Game y)
+        public static bool operator !=(GameCompleted x, GameCompleted y)
         {
             return !(x == y);
         }
@@ -75,17 +84,20 @@ namespace PlayFoos.Core.Model
 
         #region IDeepClonable
 
-        public Game DeepClone()
+        public GameCompleted DeepClone()
         {
-            return new Game()
+            return new GameCompleted()
             {
-                Id = this.Id,
-                Created = this.Created,
-                Started = this.Started,
-                ScoreBlack = this.ScoreBlack,
-                ScoreYellow = this.ScoreYellow,
-                PlayersBlack = this.PlayersBlack.DeepClone(),
-                PlayersYellow = this.PlayersYellow.DeepClone()
+                Id = Id,
+                Created = Created,
+                Started = Started,
+                Ended = Ended,
+                Duration = Duration,
+                ScoreBlack = ScoreBlack,
+                ScoreYellow = ScoreYellow,
+                BlackWon = BlackWon,
+                PlayersBlack = PlayersBlack.DeepClone(),
+                PlayersYellow = PlayersYellow.DeepClone()
             };
         }
 
@@ -95,9 +107,9 @@ namespace PlayFoos.Core.Model
 
     #region IEqualityComparer
 
-    public class GameEqualityComparer : IEqualityComparer<Game>
+    public class GameCompletedEqualityComparer : IEqualityComparer<GameCompleted>
     {
-        public bool Equals(Game x, Game y)
+        public bool Equals(GameCompleted x, GameCompleted y)
         {
             if (object.ReferenceEquals(x, y)) return true;
 
@@ -109,14 +121,17 @@ namespace PlayFoos.Core.Model
                 x.Id == y.Id &&
                 x.Created == y.Created &&
                 x.Started == y.Started &&
+                x.Duration == y.Duration &&
+                x.Ended == y.Ended &&
                 x.ScoreBlack == y.ScoreBlack &&
                 x.ScoreYellow == y.ScoreYellow &&
+                x.BlackWon == y.BlackWon &&
                 x.PlayersBlack.SafeSequenceEqual(y.PlayersBlack) &&
                 x.PlayersYellow.SafeSequenceEqual(y.PlayersYellow);
             return result;
         }
 
-        public int GetHashCode(Game obj)
+        public int GetHashCode(GameCompleted obj)
         {
             // Check whether the object is null 
             if (Object.ReferenceEquals(obj, null)) return 0;
@@ -125,8 +140,11 @@ namespace PlayFoos.Core.Model
                 .Hash(obj.Id)
                 .Hash(obj.Created)
                 .Hash(obj.Started)
+                .Hash(obj.Duration)
+                .Hash(obj.Ended)
                 .Hash(obj.ScoreBlack)
                 .Hash(obj.ScoreYellow)
+                .Hash(obj.BlackWon)
                 .Hash(obj.PlayersBlack)
                 .Hash(obj.PlayersYellow);
         }
