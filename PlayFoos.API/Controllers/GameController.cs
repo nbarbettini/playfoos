@@ -13,10 +13,9 @@ namespace PlayFoos.API.Controllers
     {
         private readonly IGameService _gameService;
 
-        public GameController() 
+        public GameController(IGameService gameService) 
         {
-            var context = new Core.MongoContext("mongodb://192.168.2.140", "PlayFoos");
-            _gameService = new GameService(context);
+            _gameService = gameService;
         }
 
         // POST: api/New

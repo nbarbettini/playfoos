@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayFoos.Core
+namespace PlayFoos.Core.Context
 {
-    public class MongoContext
+    public class MongoContext : IMongoContext
     {
         private readonly IMongoClient _client;
         private readonly IMongoDatabase _db;

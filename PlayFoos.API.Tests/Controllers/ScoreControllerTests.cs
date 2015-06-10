@@ -21,8 +21,7 @@ namespace PlayFoos.API.Tests.Controllers
         public void Setup()
         {
             _scoreServiceMock = new Mock<IGameService>(MockBehavior.Strict);
-            throw new NotImplementedException();
-            //_controller = new ScoreController(_scoreServiceMock.Object);
+            _controller = new ScoreController(_scoreServiceMock.Object);
         }
 
         [TestMethod]

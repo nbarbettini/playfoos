@@ -52,7 +52,7 @@ namespace PlayFoos.Core.Services
                 Created = game.Created,
                 Started = game.Started.Value,
                 Ended = endedAt,
-                Duration = endedAt - game.Created,
+                Duration = endedAt - game.Started.Value,
                 ScoreBlack = game.ScoreBlack,
                 ScoreYellow = game.ScoreYellow,
                 BlackWon = blackWon
@@ -60,38 +60,21 @@ namespace PlayFoos.Core.Services
 
             if (ArePlayersValid(game))
             {
-                var allUpdated = true;
-                var updatedBlack = new List<Model.PlayerHistorical>();
-                var updatedYellow = new List<Model.PlayerHistorical>();
-                foreach (var player in game.PlayersBlack)
+                var newRatings = _ratingCalculatorService.CalculateRatingChange(game.PlayersBlack, game.PlayersYellow, blackWon);
+                if (newRatings.IsValid())
                 {
-                    var historicalPlayer = new Model.PlayerHistorical(player);
-                    var endRating = _ratingCalculatorService.GetNewRating(x => x == player, game.PlayersBlack, game.PlayersYellow, blackWon);
-                    if (!endRating.HasValue)
+                    foreach (var player in game.PlayersBlack)
                     {
-                        allUpdated = false;
-                        break;
+                        var historicalPlayer = new Model.PlayerHistorical(player);
+                        historicalPlayer.EndRating = newRatings.ForPlayer(player.Id);
+                        completed.PlayersBlack.Add(historicalPlayer);
                     }
-                    historicalPlayer.EndRating = endRating.Value;
-                    updatedBlack.Add(historicalPlayer);
-                }
-                foreach (var player in game.PlayersYellow)
-                {
-                    var historicalPlayer = new Model.PlayerHistorical(player);
-                    var endRating = _ratingCalculatorService.GetNewRating(x => x == player, game.PlayersBlack, game.PlayersYellow, blackWon);
-                    if (!endRating.HasValue)
+                    foreach (var player in game.PlayersYellow)
                     {
-                        allUpdated = false;
-                        break;
+                        var historicalPlayer = new Model.PlayerHistorical(player);
+                        historicalPlayer.EndRating = newRatings.ForPlayer(player.Id);
+                        completed.PlayersYellow.Add(historicalPlayer);
                     }
-                    historicalPlayer.EndRating = endRating.Value;
-                    updatedYellow.Add(historicalPlayer);
-                }
-
-                if (allUpdated)
-                {
-                    completed.PlayersBlack = updatedBlack;
-                    completed.PlayersYellow = updatedYellow;
                 }
             }
 

@@ -11,6 +11,7 @@ using PlayFoos.Core;
 using PlayFoos.Core.Services;
 using Nito.AsyncEx;
 using PlayFoos.Engine.Workers;
+using PlayFoos.Core.Context;
 
 namespace PlayFoos.Engine
 {
@@ -21,7 +22,7 @@ namespace PlayFoos.Engine
         private readonly Timer _timer;
 
         private readonly IHubContext _hubContext;
-        private readonly MongoContext _context;
+        private readonly IMongoContext _mongoContext;
 
         private readonly IGameService _gameService;
         private readonly IGameArchiveService _gameArchiveService;
@@ -30,22 +31,25 @@ namespace PlayFoos.Engine
         // Workers
         private readonly List<Worker> _workers;
 
-        public Engine()
+        public Engine(IHubContext hubContext, 
+            IMongoContext mongoContext, 
+            IGameService gameService, 
+            IGameArchiveService gameArchiveService,
+            IGameLogicService gameLogicSerivce)
         {
             // Connect to Mongo and services (TODO)
-            _context = new MongoContext("mongodb://192.168.2.140", "PlayFoos");
-            _gameService = new GameService(_context);
-            _gameLogicService = new GameLogicService(new EloRatingCalculatorService());
-
-            // Connect to SignalR hub
-            _hubContext = GlobalHost.ConnectionManager.GetHubContext<NotifyHub>();
+            _hubContext = hubContext;
+            _mongoContext = mongoContext;
+            _gameService = gameService;
+            _gameArchiveService = gameArchiveService;
+            _gameLogicService = gameLogicSerivce;
 
             // Set up workers
             _workers = new List<Worker>() {
                 new GameStateWorker(_hubContext, _gameService, _gameArchiveService, _gameLogicService)
             };
 
-            // Set up timers
+            // Set up timer
             _timer = new Timer(1000) { AutoReset = false };
             _timer.Elapsed += async (s, e) =>
             {
@@ -70,6 +74,12 @@ namespace PlayFoos.Engine
 #endif
         }
 
+        private async Task Update()
+        {
+            await Task.WhenAll(
+                _workers.Select(x => x.UpdateAsync()));
+        }
+
         public void Start()
         {
             logger.Info("Engine starting...");
@@ -83,12 +93,6 @@ namespace PlayFoos.Engine
 
             // Will block if workers are currently updating
             _workers.ForEach(x => x.Dispose());
-        }
-
-        private async Task Update()
-        {
-            await Task.WhenAll(
-                _workers.Select(x => x.UpdateAsync()));
         }
     }
 }

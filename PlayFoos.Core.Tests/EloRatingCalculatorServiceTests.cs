@@ -58,61 +58,48 @@ namespace PlayFoos.Core.Tests
         #region Simple/logic tests
         [TestMethod]
         [TestCategory("Core.EloRatingCalculatorService")]
-        public void Ensure_method_fails_for_incorrect_number_of_players()
+        public void Should_return_empty_for_invalid_number_of_players()
         {
-            var newRatings = _service.GetNewRatings(standardFirstTeam, new List<PlayerActive>(), true);
+            var calculated = _service.CalculateRatingChange(standardFirstTeam, new List<PlayerActive>(), true);
 
-            Assert.IsFalse(newRatings.Any());
+            Assert.IsFalse(calculated.Results.Any());
         }
 
         [TestMethod]
         [TestCategory("Core.EloRatingCalculatorService")]
         public void Ensure_tuple_order_is_correct()
         {
-            var newRatings = _service.GetNewRatings(standardFirstTeam, standardSecondTeam, true);
+            var calculated = _service.CalculateRatingChange(standardFirstTeam, standardSecondTeam, true);
 
             // [0, 1], [0, 1] => [0, 1, 2, 3]
-            Assert.AreEqual(standardFirstTeam.ElementAt(0).Id, newRatings.ElementAt(0).Item1);
-            Assert.AreEqual(standardFirstTeam.ElementAt(1).Id, newRatings.ElementAt(1).Item1);
-            Assert.AreEqual(standardSecondTeam.ElementAt(0).Id, newRatings.ElementAt(2).Item1);
-            Assert.AreEqual(standardSecondTeam.ElementAt(1).Id, newRatings.ElementAt(3).Item1);
+            Assert.AreEqual(standardFirstTeam.ElementAt(0).Id, calculated.Results.ElementAt(0).Item1);
+            Assert.AreEqual(standardFirstTeam.ElementAt(1).Id, calculated.Results.ElementAt(1).Item1);
+            Assert.AreEqual(standardSecondTeam.ElementAt(0).Id, calculated.Results.ElementAt(2).Item1);
+            Assert.AreEqual(standardSecondTeam.ElementAt(1).Id, calculated.Results.ElementAt(3).Item1);
         }
 
         [TestMethod]
         [TestCategory("Core.EloRatingCalculatorService")]
         public void When_first_team_wins()
         {
-            var newRatings = _service.GetNewRatings(standardFirstTeam, standardSecondTeam, true);
+            var calculated = _service.CalculateRatingChange(standardFirstTeam, standardSecondTeam, true);
 
-            Assert.AreEqual(1600, newRatings.ElementAt(0).Item2);
-            Assert.AreEqual(1600, newRatings.ElementAt(1).Item2);
-            Assert.AreEqual(1500, newRatings.ElementAt(2).Item2);
-            Assert.AreEqual(1500, newRatings.ElementAt(3).Item2);
+            Assert.AreEqual(1620, calculated.Results.ElementAt(0).Item2);
+            Assert.AreEqual(1620, calculated.Results.ElementAt(1).Item2);
+            Assert.AreEqual(1380, calculated.Results.ElementAt(2).Item2);
+            Assert.AreEqual(1380, calculated.Results.ElementAt(3).Item2);
         }
 
         [TestMethod]
         [TestCategory("Core.EloRatingCalculatorService")]
         public void When_second_team_wins()
         {
-            var newRatings = _service.GetNewRatings(standardFirstTeam, standardSecondTeam, false);
+            var calculated = _service.CalculateRatingChange(standardFirstTeam, standardSecondTeam, false);
 
-            Assert.AreEqual(1500, newRatings.ElementAt(0).Item2);
-            Assert.AreEqual(1500, newRatings.ElementAt(1).Item2);
-            Assert.AreEqual(1600, newRatings.ElementAt(2).Item2);
-            Assert.AreEqual(1600, newRatings.ElementAt(3).Item2);
-        }
-
-        [TestMethod]
-        [TestCategory("Core.EloRatingCalculatorService")]
-        public void When_first_team_wins_selecting_single_player()
-        {
-            var player2 = standardFirstTeam.ElementAt(1);
-            player2.Rating = 1501;
-
-            var newRatingForPlayer2 = _service.GetNewRating(x => x.Id == standardFirstTeam.ElementAt(1).Id,
-                standardFirstTeam, standardSecondTeam, true);
-
-            Assert.AreEqual(1601, newRatingForPlayer2);
+            Assert.AreEqual(1380, calculated.Results.ElementAt(0).Item2);
+            Assert.AreEqual(1380, calculated.Results.ElementAt(1).Item2);
+            Assert.AreEqual(1620, calculated.Results.ElementAt(2).Item2);
+            Assert.AreEqual(1620, calculated.Results.ElementAt(3).Item2);
         }
 
         #endregion
@@ -127,10 +114,10 @@ namespace PlayFoos.Core.Tests
             var player2 = new PlayerActive() { Rating = 1500 };
             // Two new players (1500), +/- 60 points with k=120
 
-            _service.UpdateSingleRating(player1, player2, true);
+            var result = _service.CalculateAdjustmentForPair(player1, player2, true);
 
-            Assert.AreEqual(1560, player1.Rating);
-            Assert.AreEqual(1440, player2.Rating);
+            Assert.AreEqual(60, result.Item1);
+            Assert.AreEqual(-60, result.Item2);
         }
 
         [TestMethod]
@@ -141,10 +128,10 @@ namespace PlayFoos.Core.Tests
             var player2 = new PlayerActive() { Rating = 1500 };
             // Two new players (1500), +/- 60 points with k=120
 
-            _service.UpdateSingleRating(player1, player2, false);
+            var result = _service.CalculateAdjustmentForPair(player1, player2, false);
 
-            Assert.AreEqual(1560, player2.Rating);
-            Assert.AreEqual(1440, player1.Rating);
+            Assert.AreEqual(-60, result.Item1);
+            Assert.AreEqual(60, result.Item2);
         }
 
         [TestMethod]
@@ -156,10 +143,10 @@ namespace PlayFoos.Core.Tests
             // Player1 gains 6 or loses 114 (k=120)
             // Player2 gains 114 or loses 6 (k=120)
 
-            _service.UpdateSingleRating(player1, player2, true);
+            var result = _service.CalculateAdjustmentForPair(player1, player2, true);
 
-            Assert.AreEqual(2006, player1.Rating);
-            Assert.AreEqual(1494, player2.Rating);
+            Assert.AreEqual(6, result.Item1);
+            Assert.AreEqual(-6, result.Item2);
         }
 
         [TestMethod]
@@ -171,10 +158,34 @@ namespace PlayFoos.Core.Tests
             // Player1 gains 116 or loses 4 (k=120)
             // Player2 gains 4 or loses 116 (k=120)
 
-            _service.UpdateSingleRating(player1, player2, true);
+            var result = _service.CalculateAdjustmentForPair(player1, player2, true);
 
-            Assert.AreEqual(1016, player1.Rating);
-            Assert.AreEqual(1384, player2.Rating);
+            Assert.AreEqual(116, result.Item1);
+            Assert.AreEqual(-116, result.Item2);
+        }
+
+        [TestMethod]
+        [TestCategory("Core.EloRatingCalculatorService")]
+        public void When_calculating_mixed_team_results()
+        {
+            standardFirstTeam.ElementAt(0).Rating = 1780;
+            standardFirstTeam.ElementAt(1).Rating = 1300;
+            standardSecondTeam.ElementAt(0).Rating = 2100;
+            standardSecondTeam.ElementAt(1).Rating = 1920;
+
+            // An underdog team beats a champion team!
+            // Expected results:
+            //  Team1 Player1: 1780 -> (+104 +83) = 1967
+            //  Team1 Player2: 1300 -> (+119 +117) = 1536
+            //  Team2 Player1: 2100 -> (-104 -119) = 1877
+            //  Team2 Player2: 1920 -> (-83 -117) = 1720
+
+            var output = _service.CalculateRatingChange(standardFirstTeam, standardSecondTeam, true);
+
+            Assert.AreEqual(1967, output.Results.ElementAt(0).Item2);
+            Assert.AreEqual(1536, output.Results.ElementAt(1).Item2);
+            Assert.AreEqual(1877, output.Results.ElementAt(2).Item2);
+            Assert.AreEqual(1720, output.Results.ElementAt(3).Item2);
         }
 
         #endregion

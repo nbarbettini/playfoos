@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using PlayFoos.Core.Context;
 
 namespace PlayFoos.Core.Services
 {
@@ -12,7 +13,7 @@ namespace PlayFoos.Core.Services
     {
         private readonly IMongoCollection<Model.Game> _collection;
 
-        public GameService(MongoContext context)
+        public GameService(IMongoContext context)
         {
             _collection = context.GetCollection<Model.Game>("CurrentGame");
         }

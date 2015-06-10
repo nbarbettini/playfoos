@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Client;
+using PlayFoos.API.DependencyResolution;
 using PlayFoos.API.Hubs;
 using PlayFoos.Core.Model;
 using System;
@@ -17,6 +18,10 @@ namespace PlayFoos.API
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
+            // Set up IOC container
+            IOC.Initialize();
+            GlobalConfiguration.Configuration.DependencyResolver = new StructureMapDependencyResolver(IOC.Container);
+
             // Set up SignalR client for service communication
             IHubProxy _hub;
             var connection = new HubConnection(@"http://localhost:8080/");
@@ -24,13 +29,13 @@ namespace PlayFoos.API
             connection.Start();
 
             IHubContext _hubContext;
-            _hubContext = GlobalHost.ConnectionManager.GetHubContext<GameStateHub>();
+            _hubContext = GlobalHost.ConnectionManager.GetHubContext<NotifyHub>();
 
-            throw new NotImplementedException();
-            //_hub.On<GameStateDto>("UpdateGameState", state => {
-            //    // Push to all connected clients
-            //    _hubContext.Clients.All.UpdateGameState(state);
-            //});
+            _hub.On<Game>("UpdateGameState", state =>
+            {
+                // Push to all connected clients
+                _hubContext.Clients.All.UpdateGameState(state);
+            });
         }
     }
 }

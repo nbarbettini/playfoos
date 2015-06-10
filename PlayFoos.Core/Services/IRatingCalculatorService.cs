@@ -8,12 +8,7 @@ namespace PlayFoos.Core.Services
 {
     public interface IRatingCalculatorService
     {
-        List<Tuple<Guid, int?>> GetNewRatings(
-            IEnumerable<Model.PlayerActive> firstTeam,
-            IEnumerable<Model.PlayerActive> secondTeam,
-            bool firstTeamWon);
-
-        int? GetNewRating(Func<Model.PlayerActive, bool> selector,
+        RatingUpdateResultDto CalculateRatingChange(
             IEnumerable<Model.PlayerActive> firstTeam,
             IEnumerable<Model.PlayerActive> secondTeam,
             bool firstTeamWon);

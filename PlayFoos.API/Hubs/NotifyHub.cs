@@ -6,7 +6,7 @@ using System.Web;
 
 namespace PlayFoos.API.Hubs
 {
-    public class GameStateHub : Hub
+    public class NotifyHub : Hub
     {
     }
 }
