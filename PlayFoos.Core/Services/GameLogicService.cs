@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NodaTime;
 
 namespace PlayFoos.Core.Services
 {
     public class GameLogicService : IGameLogicService
     {
         private readonly IRatingCalculatorService _ratingCalculatorService;
+        private readonly IClock _clock;
 
-        public GameLogicService(IRatingCalculatorService ratingCalculatorService)
+        public GameLogicService(IRatingCalculatorService ratingCalculatorService, IClock clock)
         {
             _ratingCalculatorService = ratingCalculatorService;
+            _clock = clock;
         }
 
         public bool ArePlayersValid(Model.Game game)
@@ -44,7 +47,7 @@ namespace PlayFoos.Core.Services
                 return null;
 
             var blackWon = (game.ScoreBlack > game.ScoreYellow);
-            var endedAt = DateTime.Now;
+            var endedAt = _clock.Now.ToDateTimeUtc().ToLocalTime();
 
             var completed = new Model.GameCompleted()
             {
