@@ -1,4 +1,5 @@
-﻿using PlayFoos.Core.Services;
+﻿using PlayFoos.API.Communication;
+using PlayFoos.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace PlayFoos.API.Controllers
             try
             {
                 var good = await _gameService.UpdateScoreAsync(id, amount);
+                EngineChannel.Update();
 
                 if (good)
                     return Ok();

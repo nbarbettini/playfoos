@@ -1,4 +1,6 @@
-﻿using PlayFoos.Core.Context;
+﻿using Microsoft.AspNet.SignalR;
+using PlayFoos.API.Communication;
+using PlayFoos.Core.Context;
 using PlayFoos.Core.Services;
 using StructureMap;
 using StructureMap.Graph;
@@ -30,6 +32,10 @@ namespace PlayFoos.API.DependencyResolution
                     .Singleton()
                     .Ctor<string>("connectionString").Is(PlayFoos.Core.Config.MongoConnection)
                     .Ctor<string>("database").Is(PlayFoos.Core.Config.MongoDatabase);
+
+                // Elo rating calculator
+                x.For<IRatingCalculatorService>()
+                    .Use<EloRatingCalculatorService>();
             });
         }
     }

@@ -23,5 +23,13 @@ namespace PlayFoos.Core
                 return ConfigurationManager.AppSettings["MongoDatabase"];
             }
         }
+
+        public static string EngineChannelUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["EngineChannelUrl"];
+            }
+        }
     }
 }

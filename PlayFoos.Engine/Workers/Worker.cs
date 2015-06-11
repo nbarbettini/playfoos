@@ -14,7 +14,7 @@ namespace PlayFoos.Engine.Workers
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         //protected readonly int _lockTimeoutMs;
-        private CancellationTokenSource _lockImmediately;
+        private readonly CancellationTokenSource _lockImmediately;
         protected readonly AsyncLock _lock = new AsyncLock();
 
         public Worker()

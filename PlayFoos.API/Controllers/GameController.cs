@@ -1,4 +1,5 @@
-﻿using PlayFoos.Core.Services;
+﻿using PlayFoos.API.Communication;
+using PlayFoos.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,10 @@ namespace PlayFoos.API.Controllers
                 if (await _gameService.NewAsync() == null)
                     return BadRequest("A game is already in progress!");
                 else
+                {
                     return Ok();
+                    EngineChannel.Update();
+                }
             }
             catch (Exception e)
             {

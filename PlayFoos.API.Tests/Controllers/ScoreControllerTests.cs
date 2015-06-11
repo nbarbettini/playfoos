@@ -8,6 +8,7 @@ using Moq;
 using PlayFoos.Core.Services;
 using PlayFoos.API.Controllers;
 using System.Web.Http.Results;
+using PlayFoos.API.Communication;
 
 namespace PlayFoos.API.Tests.Controllers
 {

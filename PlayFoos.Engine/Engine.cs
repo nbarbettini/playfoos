@@ -20,6 +20,8 @@ namespace PlayFoos.Engine
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private readonly Timer _timer;
+        private readonly System.Threading.CancellationTokenSource _lockImmediately;
+        protected readonly AsyncLock _lock = new AsyncLock();
 
         private readonly IHubContext _hubContext;
         private readonly IMongoContext _mongoContext;
@@ -49,8 +51,14 @@ namespace PlayFoos.Engine
                 new GameStateWorker(_hubContext, _gameService, _gameArchiveService, _gameLogicService)
             };
 
+            // Set up callback on Hub
+            NotifyHub.UpdateCallback = Update;
+
             // Set up timer
-            _timer = new Timer(1000) { AutoReset = false };
+            _lockImmediately = new System.Threading.CancellationTokenSource();
+            _lockImmediately.Cancel();
+
+            _timer = new Timer(2000) { AutoReset = false };
             _timer.Elapsed += async (s, e) =>
             {
                 await Update();
@@ -76,8 +84,15 @@ namespace PlayFoos.Engine
 
         private async Task Update()
         {
-            await Task.WhenAll(
-                _workers.Select(x => x.UpdateAsync()));
+            try
+            {
+                using (await _lock.LockAsync(_lockImmediately.Token))
+                {
+                    await Task.WhenAll(
+                        _workers.Select(x => x.UpdateAsync()));
+                }
+            }
+            catch (OperationCanceledException) { }
         }
 
         public void Start()

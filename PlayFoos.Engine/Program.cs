@@ -7,6 +7,7 @@ using Topshelf;
 using NLog;
 using Microsoft.Owin.Hosting;
 using Topshelf.StructureMap;
+using PlayFoos.Core;
 
 namespace PlayFoos.Engine
 {
@@ -15,7 +16,6 @@ namespace PlayFoos.Engine
         public static void Main(string[] args)
         {
             IDisposable selfHost = null;
-            string url = @"http://localhost:8080/";
 
             // Initialize IOC container
             IOC.Initialize();
@@ -31,7 +31,7 @@ namespace PlayFoos.Engine
                     s.ConstructUsingStructureMap();
 
                     s.WhenStarted(e => {
-                        selfHost = WebApp.Start<Startup>(url);
+                        selfHost = WebApp.Start<Startup>(Config.EngineChannelUrl);
                         e.Start();
                     });
 

@@ -12,10 +12,12 @@ namespace PlayFoos.Core.Services
     public class GameService : IGameService
     {
         private readonly IMongoCollection<Model.Game> _collection;
+        private readonly IGameLogicService _gameLogicService;
 
-        public GameService(IMongoContext context)
+        public GameService(IMongoContext context, IGameLogicService gameLogicService)
         {
             _collection = context.GetCollection<Model.Game>("CurrentGame");
+            _gameLogicService = gameLogicService;
         }
 
         public async Task<Model.Game> GetCurrentAsync()
@@ -39,6 +41,9 @@ namespace PlayFoos.Core.Services
         {
             var current = await GetCurrentAsync();
             if (current == null)
+                return false;
+
+            if (_gameLogicService.IsGameOver(current))
                 return false;
 
             UpdateDefinition<Model.Game> update;
