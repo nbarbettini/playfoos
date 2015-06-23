@@ -2,18 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace PlayFoos.API.Communication
 {
-    public static class ClientChannel
+    public class ClientChannel : IClientChannel
     {
-        private static readonly Lazy<IHubContext> _context =
-            new Lazy<IHubContext>(() => GlobalHost.ConnectionManager.GetHubContext<NotifyHub>());
+        private readonly IHubContext _hubContext;
 
-        public static IHubContext Hub
+        public ClientChannel()
         {
-            get { return _context.Value; }
+            _hubContext = GlobalHost.ConnectionManager.GetHubContext<NotifyHub>();
+        }
+
+        public async Task BroadcastGameState(Core.Model.Game game)
+        {
+            await _hubContext.Clients.All.BroadcastGameState(game);
         }
     }
 }

@@ -4,8 +4,7 @@ using PlayFoos.Core.Model;
 using PlayFoos.Core.Services;
 using System.Linq;
 using System.Collections.Generic;
-using NodaTime;
-using NodaTime.Testing;
+using PlayFoos.Core.Objects;
 
 namespace PlayFoos.Core.Tests
 {
@@ -18,7 +17,7 @@ namespace PlayFoos.Core.Tests
         [TestInitialize]
         public void Setup()
         {
-            _fakeClock = new FakeClock(SystemClock.Instance.Now);
+            _fakeClock = new FakeClock(() => DateTime.Parse("1/1/2016 5:01PM"));
             _service = new GameLogicService(new EloRatingCalculatorService(), _fakeClock);
         }
 
@@ -88,7 +87,7 @@ namespace PlayFoos.Core.Tests
             {
                 ScoreBlack = 11,
                 ScoreYellow = 9,
-                Started = _fakeClock.Now.Plus(Duration.FromMinutes(-1)).ToDateTimeUtc().ToLocalTime() // started 1 minute ago
+                Started = _fakeClock.Now.AddMinutes(-1) // started 1 minute ago
             };
 
             var completed = _service.CompleteGame(game);
@@ -96,7 +95,7 @@ namespace PlayFoos.Core.Tests
             Assert.IsNotNull(completed);
             Assert.AreEqual(game.Id, completed.Id);
             Assert.AreEqual(game.Created, completed.Created);
-            Assert.AreEqual(_fakeClock.Now.ToDateTimeUtc().ToLocalTime(), completed.Ended);
+            Assert.AreEqual(_fakeClock.Now, completed.Ended);
             Assert.AreEqual(TimeSpan.FromMinutes(1), completed.Duration);
             Assert.AreEqual(game.ScoreBlack, completed.ScoreBlack);
             Assert.AreEqual(game.ScoreYellow, completed.ScoreYellow);
@@ -114,7 +113,7 @@ namespace PlayFoos.Core.Tests
             {
                 ScoreBlack = 9,
                 ScoreYellow = 11,
-                Started = _fakeClock.Now.Plus(Duration.FromMinutes(-1)).ToDateTimeUtc().ToLocalTime(), // started 1 minute ago
+                Started = _fakeClock.Now.AddMinutes(-1), // started 1 minute ago
                 PlayersBlack = new List<PlayerActive>()
                     {
                         new PlayerActive() { Name = "Player1", Rating = 2000},
@@ -132,7 +131,7 @@ namespace PlayFoos.Core.Tests
             Assert.IsNotNull(completed);
             Assert.AreEqual(game.Id, completed.Id);
             Assert.AreEqual(game.Created, completed.Created);
-            Assert.AreEqual(_fakeClock.Now.ToDateTimeUtc().ToLocalTime(), completed.Ended);
+            Assert.AreEqual(_fakeClock.Now, completed.Ended);
             Assert.AreEqual(TimeSpan.FromMinutes(1), completed.Duration);
             Assert.AreEqual(game.ScoreBlack, completed.ScoreBlack);
             Assert.AreEqual(game.ScoreYellow, completed.ScoreYellow);

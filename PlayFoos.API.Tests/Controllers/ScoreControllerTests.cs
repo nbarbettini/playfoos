@@ -16,13 +16,16 @@ namespace PlayFoos.API.Tests.Controllers
     public class ScoreControllerTests
     {
         private Mock<IGameService> _scoreServiceMock;
+        private Mock<IEngineChannel> _engineChannelMock;
         private ScoreController _controller;
 
         [TestInitialize]
         public void Setup()
         {
             _scoreServiceMock = new Mock<IGameService>(MockBehavior.Strict);
-            _controller = new ScoreController(_scoreServiceMock.Object);
+            _engineChannelMock = new Mock<IEngineChannel>();
+            
+            _controller = new ScoreController(_scoreServiceMock.Object, _engineChannelMock.Object);
         }
 
         [TestMethod]

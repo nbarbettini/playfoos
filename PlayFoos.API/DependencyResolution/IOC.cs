@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.SignalR;
 using PlayFoos.API.Communication;
 using PlayFoos.Core.Context;
+using PlayFoos.Core.Objects;
 using PlayFoos.Core.Services;
 using StructureMap;
 using StructureMap.Graph;
@@ -25,6 +26,17 @@ namespace PlayFoos.API.DependencyResolution
                     scan.AssemblyContainingType<IGameService>();
                     scan.WithDefaultConventions();
                 });
+
+                x.For<IClock>()
+                    .Use<NowClock>();
+
+                // SignalR channels
+                x.For<IClientChannel>()
+                    .Use<ClientChannel>()
+                    .Singleton();
+                x.For<IEngineChannel>()
+                    .Use<EngineChannel>()
+                    .Ctor<string>("url").Is(Core.Config.EngineChannelUrl);
 
                 // Mongo context
                 x.For<IMongoContext>()

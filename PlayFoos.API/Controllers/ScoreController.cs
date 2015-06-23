@@ -13,10 +13,12 @@ namespace PlayFoos.API.Controllers
     public class ScoreController : ApiController
     {
         private readonly IGameService _gameService;
+        private readonly IEngineChannel _engineChannel;
 
-        public ScoreController(IGameService gameService)
+        public ScoreController(IGameService gameService, IEngineChannel engineChannel)
         {
             _gameService = gameService;
+            _engineChannel = engineChannel;
         }
 
         // PUT: api/Score/1
@@ -30,7 +32,7 @@ namespace PlayFoos.API.Controllers
             try
             {
                 var good = await _gameService.UpdateScoreAsync(id, amount);
-                EngineChannel.Update();
+                await _engineChannel.TriggerUpdate();
 
                 if (good)
                     return Ok();

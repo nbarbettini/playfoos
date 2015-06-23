@@ -8,6 +8,7 @@ using StructureMap.Graph;
 using PlayFoos.Core.Context;
 using Microsoft.AspNet.SignalR;
 using PlayFoos.Core.Services;
+using PlayFoos.Core.Objects;
 
 namespace PlayFoos.Engine
 {
@@ -25,6 +26,9 @@ namespace PlayFoos.Engine
                     scan.AssemblyContainingType<IGameService>();
                     scan.WithDefaultConventions();
                 });
+
+                x.For<IClock>()
+                    .Use<NowClock>();
 
                 // Mongo context
                 x.For<IMongoContext>()

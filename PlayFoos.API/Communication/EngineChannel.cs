@@ -8,16 +8,20 @@ using System.Web;
 
 namespace PlayFoos.API.Communication
 {
-    public static class EngineChannel
+    public sealed class EngineChannel : IEngineChannel
     {
-        public static IHubProxy Hub { get; private set; }
-        private static HubConnection _connection;
+        private readonly IClientChannel _clientChannel;
 
-        public static void Initialize(string url)
+        private readonly IHubProxy _hub;
+        private readonly HubConnection _connection;
+
+        public EngineChannel(IClientChannel clientChannel, string url)
         {
+            _clientChannel = clientChannel;
+
             _connection = new HubConnection(url);
             _connection.TransportConnectTimeout = TimeSpan.FromSeconds(5);
-            Hub = _connection.CreateHubProxy("NotifyHub");
+            _hub = _connection.CreateHubProxy("NotifyHub");
             _connection.StateChanged += (s) =>
             {
                 Console.WriteLine("Changed from {0} to {1}", s.OldState, s.NewState);
@@ -32,28 +36,35 @@ namespace PlayFoos.API.Communication
             };
 
             // Rebroadcast behavior for all state update messages pushed from engine
-            Hub.On<Core.Model.Game>("UpdateGameState", state =>
+            _hub.On<Core.Model.Game>("UpdateGameState", state =>
             {
-                ClientChannel.Hub.Clients.All.UpdateGameState(state);
+                _clientChannel.BroadcastGameState(state);
             });
+
+            _connection.Start();
         }
 
-        public static async Task Start()
+        public async Task TriggerUpdate()
         {
-            await _connection.Start();
+            await EnsureAlive();
+
+            await _hub.Invoke("Update");
         }
 
-        public static async Task Update()
+        private async Task EnsureAlive()
         {
             if (_connection.State == ConnectionState.Disconnected)
                 await _connection.Start();
-
-            await Hub.Invoke("Update");
         }
 
-        public static void Stop()
-        {
-            _connection.Stop();
-        }
+        //public async Task Start()
+        //{
+        //    await _connection.Start();
+        //}
+
+        //public async Task Stop()
+        //{
+        //    _connection.Stop();
+        //}
     }
 }

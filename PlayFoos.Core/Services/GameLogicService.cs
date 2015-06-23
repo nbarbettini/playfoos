@@ -1,9 +1,9 @@
-﻿using System;
+﻿using PlayFoos.Core.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NodaTime;
 
 namespace PlayFoos.Core.Services
 {
@@ -47,7 +47,7 @@ namespace PlayFoos.Core.Services
                 return null;
 
             var blackWon = (game.ScoreBlack > game.ScoreYellow);
-            var endedAt = _clock.Now.ToDateTimeUtc().ToLocalTime();
+            var endedAt = _clock.Now;
 
             var completed = new Model.GameCompleted()
             {

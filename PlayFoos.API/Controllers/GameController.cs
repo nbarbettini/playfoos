@@ -13,10 +13,12 @@ namespace PlayFoos.API.Controllers
     public class GameController : ApiController
     {
         private readonly IGameService _gameService;
+        private readonly IEngineChannel _engineChannel;
 
-        public GameController(IGameService gameService) 
+        public GameController(IGameService gameService, IEngineChannel engineChannel) 
         {
             _gameService = gameService;
+            _engineChannel = engineChannel;
         }
 
         // POST: api/New
@@ -28,8 +30,8 @@ namespace PlayFoos.API.Controllers
                     return BadRequest("A game is already in progress!");
                 else
                 {
+                    await _engineChannel.TriggerUpdate();
                     return Ok();
-                    EngineChannel.Update();
                 }
             }
             catch (Exception e)
