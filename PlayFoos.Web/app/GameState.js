@@ -1,6 +1,11 @@
 ﻿app.factory('GameState', ['$rootScope', 'Hub', '$http', function ($rootScope, Hub, $http) {
 
-    var currentState = {};
+    var _blankGameState = {
+        GameOver: true,
+        IsVolley: false,
+    };
+
+    var currentState = _blankGameState;
 
     var increase = function (side) {
         $http({
@@ -18,6 +23,13 @@
         });
     }
 
+    var startNew = function () {
+        $http({
+            method: 'POST',
+            url: 'api/game'
+        });
+    }
+
     //declaring the hub connection
     var hub = new Hub('notifyHub', {
 
@@ -26,7 +38,7 @@
         //client side methods
         listeners: {
             'updateGameState': function (gameState) {
-                currentState = gameState;
+                currentState = gameState || _blankGameState;
                 $rootScope.$apply();
             }
         },
@@ -58,5 +70,6 @@
         getState: function () { return currentState; },
         increase: increase,
         decrease: decrease,
+        startNew: startNew
     };
 }]);

@@ -33,12 +33,16 @@ namespace PlayFoos.Core.Model
         [BsonElement("yTeam")]
         public List<PlayerActive> TeamYellow { get; set; }
 
+        [BsonElement("over")]
+        public bool GameOver { get; set; }
+
         // Default constructor
         public Game()
         {
             Id = Guid.NewGuid();
             Created = DateTime.Now;
             InVolley = true;
+            GameOver = false;
 
             TeamBlack = new List<PlayerActive>();
             TeamYellow = new List<PlayerActive>();
@@ -87,6 +91,7 @@ namespace PlayFoos.Core.Model
                 Created = this.Created,
                 Started = this.Started,
                 InVolley = this.InVolley,
+                GameOver = this.GameOver,
                 ScoreBlack = this.ScoreBlack,
                 ScoreYellow = this.ScoreYellow,
                 TeamBlack = this.TeamBlack.DeepClone(),
@@ -115,6 +120,7 @@ namespace PlayFoos.Core.Model
                 x.Created == y.Created &&
                 x.Started == y.Started &&
                 x.InVolley == y.InVolley &&
+                x.GameOver == y.GameOver &&
                 x.ScoreBlack == y.ScoreBlack &&
                 x.ScoreYellow == y.ScoreYellow &&
                 x.TeamBlack.SafeSequenceEqual(y.TeamBlack) &&
@@ -132,6 +138,7 @@ namespace PlayFoos.Core.Model
                 .Hash(obj.Created)
                 .Hash(obj.Started)
                 .Hash(obj.InVolley)
+                .Hash(obj.GameOver)
                 .Hash(obj.ScoreBlack)
                 .Hash(obj.ScoreYellow)
                 .Hash(obj.TeamBlack)

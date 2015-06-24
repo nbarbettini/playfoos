@@ -21,12 +21,12 @@ namespace PlayFoos.API.Controllers
             _engineChannel = engineChannel;
         }
 
-        // POST: api/New
+        // POST: api/Game
         public async Task<IHttpActionResult> Post()
         {
             try
             {
-                if (await _gameService.NewAsync() == null)
+                if (await _gameService.NewAsync(force: true) == null)
                     return BadRequest("A game is already in progress!");
                 else
                 {

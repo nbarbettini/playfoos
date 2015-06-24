@@ -15,44 +15,13 @@ namespace NetchemiaFooz
         private const int Green = 0x00ff00;
         private const int White = 0xffffff;
         private static bool stripInterrupt = false;
-
-        // pulsing light cycle
-        private static DateTime lastBreath = DateTime.Now;
-        public static DateTime lastScore = DateTime.Now;
+        private const int BlackSide = 0;
+        private const int YellowSide = 1;
+        private const int FlashRepeat = 3;
 
         // public flags that are set by the main thread when a flash needs to happen
         public static bool flashYellow = false;
         public static bool flashBlack = false;
-
-        // an idle "breathing" pulse thread worker
-        public static void BreathingMain()
-        {
-            while (true)
-            {
-                if (lastScore.AddSeconds(30) > DateTime.Now) continue;
-                if (lastBreath.AddMilliseconds(5000) > DateTime.Now) continue;
-
-                Chain.SetBrightnessAll(0, true);
-                Chain.SetColorAll(White, true);
-                Chain.Write();
-                for (int i = 0; i < 255; i++)
-                {
-                    if (stripInterrupt) break;
-
-                    Chain.SetBrightnessAll((byte)i, true); Chain.Write();
-                    Thread.Sleep(1);
-                }
-                for (int i = 0; i < 255; i++)
-                {
-                    if (stripInterrupt) break;
-
-                    Chain.SetBrightnessAll((byte)(255 - i), true); Chain.Write();
-                    Thread.Sleep(1);
-                }
-                lastBreath = DateTime.Now;
-                Thread.Sleep(100);
-            }
-        }
 
         // a strip flash thread worker
         public static void FlasherMain()
@@ -61,37 +30,52 @@ namespace NetchemiaFooz
             {
                 if (flashYellow || flashBlack)
                 {
-                    if (flashYellow) { FlashColor(Yellow, 2); flashYellow = false; }
-                    if (flashBlack) { FlashColor(Blue, 2); flashBlack = false; }
-                    lastBreath = DateTime.Now;
+                    if (flashYellow) { WriteLeds(Yellow, YellowSide, true); flashYellow = false; }
+                    if (flashBlack) { WriteLeds(White, BlackSide, true); flashBlack = false; }
                 }
                 Thread.Sleep(100);
             }
         }
 
-        public static void Startup()
+        public static void Init()
         {
-            // A friendly green flash to say "we're ready"
-            FlashColor(Green, 1);
-            Thread.Sleep(100);
-            FlashColor(Green, 1);
+            // Turn both sides on (white and yellow)
+            WriteLeds(White, BlackSide, false);
+            WriteLeds(Yellow, YellowSide, false);
         }
 
-        private static void FlashColor(int Color, int Repeat)
+        private static void WriteLeds(int Color, int Side, bool Flash)
         {
+            int startLed = Side * 16;
+            int maxLed = 16;
+
             stripInterrupt = true;
-            Chain.SetBrightnessAll(0, true);
-            Chain.SetColorAll(Color, true);
-            Chain.Write();
-            for (int i = 0; i < Repeat; i++)
+            if (Flash)
             {
-                Chain.SetBrightnessAll(255, true); Chain.Write();
-                Thread.Sleep(75);
-                Chain.SetBrightnessAll(0, true); Chain.Write();
-                Thread.Sleep(50);
+                for (int repeat = 1; repeat <= FlashRepeat; repeat++)
+                {
+                    for (int i = startLed; i < (startLed + maxLed); i++) { Chain.SetBrightness(i, 0, true); }
+                    Chain.Write();
+                    Thread.Sleep(75);
+
+                    for (int i = startLed; i < (startLed + maxLed); i++)
+                    {
+                        Chain.SetBrightness(i, 255, true);
+                        Chain.SetColor(i, Color, true);
+                    }
+                    Chain.Write();
+                    Thread.Sleep(50);
+                }
             }
+            
+            // Set back to normal
+            for (int i = startLed; i < (startLed + maxLed); i++)
+            {
+                Chain.SetBrightness(i, 255, true);
+                Chain.SetColor(i, Color, true);
+            }
+            Chain.Write();
             stripInterrupt = false;
         }
-
     }
 }

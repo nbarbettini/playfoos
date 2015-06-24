@@ -21,8 +21,8 @@ namespace PlayFoos.API.Controllers
             _engineChannel = engineChannel;
         }
 
-        // PUT: api/Score/1
-        public async Task<IHttpActionResult> Put(int id, bool increase = true)
+        // POST: api/Score/1
+        public async Task<IHttpActionResult> Post(int id, bool increase = true)
         {
             if (id < 0 || id > 1)
                 return BadRequest("Team not found");

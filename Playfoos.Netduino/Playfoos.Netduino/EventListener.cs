@@ -14,7 +14,7 @@ namespace NetchemiaFooz
 
         // software glitch filters
         public static DateTime switchLast;
-        private const int interruptTimeout = 5000;
+        private const int interruptTimeout = 2000;
         private const int distanceLimit = 115; //mm
 
         public static void MainThread()
@@ -81,7 +81,6 @@ namespace NetchemiaFooz
                         // black scoring
                         else if (blackDistance < distanceLimit) { Program.BlackScore(); }
                         switchLast = DateTime.Now;
-                        LedManager.lastScore = switchLast;
                     }
                 }
 

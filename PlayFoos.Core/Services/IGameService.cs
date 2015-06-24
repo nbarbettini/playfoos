@@ -14,6 +14,6 @@ namespace PlayFoos.Core.Services
 
         Task<bool> UpdateScoreAsync(int side, int amount);
 
-        Task<Model.Game> NewAsync();
+        Task<Model.Game> NewAsync(bool force = false);
     }
 }

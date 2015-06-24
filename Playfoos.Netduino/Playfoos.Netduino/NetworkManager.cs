@@ -13,7 +13,7 @@ namespace NetchemiaFooz
 {
     static class NetworkManager
     {
-        public const string baseURL = "http://192.168.5.1/playfoos/api";
+        public const string hostname = "192.168.5.5";
         
         // the Program thread can push stuff onto this list
         public static ArrayList messageQueue = new ArrayList();
@@ -26,17 +26,12 @@ namespace NetchemiaFooz
                 {
                     string eventName = messageQueue[0].ToString().Split(',')[0];
                     string data = messageQueue[0].ToString().Split(',')[1];
-                    string fullUri = "/api/" + eventName + "/" + data;
-                    //Debug.Print(fullUri + "\n");
+                    string fullUri = "/playfoos/api/" + eventName + "/" + data;
 
-                    HTTP_Client WebSession = new HTTP_Client(new IntegratedSocket(baseURL, 80));
-                    //Debug.Print("Socket Open\n");
+                    HTTP_Client WebSession = new HTTP_Client(new IntegratedSocket(hostname, 80));
+                    Debug.Print("POST " + WebSession.Hostname + ":" + WebSession.Port + fullUri);
                     HTTP_Client.HTTP_Response Response = WebSession.Post(fullUri);
-                    //Debug.Print(Response.ToString() + "\n");
-
-                    // Did we get the expected response? (a "200 OK")
-                    //if (Response.ResponseCode == 200) { }
-                    //    // todo
+                    Debug.Print(Response.ToString() + "\n");
 
                     messageQueue.RemoveAt(0);
                 }

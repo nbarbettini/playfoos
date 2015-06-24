@@ -41,7 +41,13 @@ namespace PlayFoos.Core.Services
         {
             var current = await GetCurrentAsync();
             if (current == null)
-                return false;
+            {
+                // Current behavior: create a new game if none exists
+                // TODO: change this
+
+                current = await NewAsync();
+                await RemoveVolleyFlag(current);
+            }
 
             if (_gameLogicService.IsGameOver(current))
                 return false;
@@ -51,6 +57,12 @@ namespace PlayFoos.Core.Services
                 return false;
             if (side == 1 && current.ScoreYellow + amount < 0)
                 return false;
+
+            if (current.InVolley)
+            {
+                await RemoveVolleyFlag(current);
+                return true;
+            }
 
             UpdateDefinition<Model.Game> update;
             if (side == 0)
@@ -66,15 +78,39 @@ namespace PlayFoos.Core.Services
             return result.IsAcknowledged;
         }
 
-        public async Task<Model.Game> NewAsync()
+        private async Task<bool> RemoveVolleyFlag(Model.Game game)
         {
-            var current = await GetCurrentAsync();
-            if (current != null)
-                return null;
+            UpdateDefinition<Model.Game> update;
+
+            update = Builders<Model.Game>.Update.Set(x => x.InVolley, false);
+            var result = await _collection.UpdateOneAsync(x => x.Id == game.Id, update);
+
+            if (result.IsAcknowledged)
+                game.InVolley = false;
+
+            return result.IsAcknowledged;
+        }
+
+        public async Task<Model.Game> NewAsync(bool force = false)
+        {
+            if (!force)
+            {
+                var current = await GetCurrentAsync();
+                if (current != null)
+                    return null;
+            }
+
+            await CleanCurrentGames();
 
             var newGame = new Model.Game();
             await _collection.InsertOneAsync(newGame);
             return newGame;
+        }
+
+        private async Task CleanCurrentGames()
+        {
+            // Delete all
+            await _collection.DeleteManyAsync(new BsonDocument());
         }
     }
 }

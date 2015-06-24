@@ -48,15 +48,34 @@
                     <span class="glyphicon glyphicon-link" 
                           data-ng-class="{ 'text-success': vm.connected(), 'text-danger': !vm.connected() }"></span>
                 </a>
-                <button type="button" class="btn btn-success navbar-btn navbar-right">New Game</button>
+                <button type="button" 
+                        class="btn btn-success navbar-btn navbar-right"
+                        data-ng-click="vm.startNew()">New Game</button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="row">
+
+        <!-- Game Over screen -->
+        <div class="row" data-ng-show="vm.state().GameOver">
             <div class="col-xs-12">
                 <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3 class="text-center">Game Over!</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- game in progress -->
+        <div class="row" data-ng-show="!vm.state().GameOver">
+            <div class="col-xs-12">
+                <div class="panel panel-default" 
+                     data-ng-class="{ 'panel-success': vm.state().InVolley, 'panel-default': !vm.state().InVolley }">
+                    <div class="panel-heading" data-ng-show="vm.state().InVolley">
+                        Volley!
+                    </div>
                     <div class="panel-body">
                         <div class="col-xs-6">
                             <a href="#" data-ng-click="vm.increaseScore(0)">
@@ -64,7 +83,7 @@
                             </a>
                             <div class="panel panel-default scorecard scorecard-black">
                                 <div class="panel-body">
-                                    <p>{{vm.getBlackScore()}}</p>
+                                    <p>{{vm.state().ScoreBlack}}</p>
                                 </div>
                             </div>
                             <a href="#" data-ng-click="vm.decreaseScore(0)">
@@ -77,7 +96,7 @@
                             </a>
                             <div class="panel panel-default scorecard scorecard-yellow">
                                 <div class="panel-body">
-                                    <p>{{vm.getYellowScore()}}</p>
+                                    <p>{{vm.state().ScoreYellow}}</p>
                                 </div>
                             </div>
                             <a href="#" data-ng-click="vm.decreaseScore(1)">
