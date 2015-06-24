@@ -46,11 +46,21 @@ namespace PlayFoos.Core.Services
             if (_gameLogicService.IsGameOver(current))
                 return false;
 
+            // TODO move this into GameLogicService
+            if (side == 0 && current.ScoreBlack + amount < 0)
+                return false;
+            if (side == 1 && current.ScoreYellow + amount < 0)
+                return false;
+
             UpdateDefinition<Model.Game> update;
             if (side == 0)
+            {
                 update = Builders<Model.Game>.Update.Set(x => x.ScoreBlack, current.ScoreBlack + amount);
+            }
             else
+            {
                 update = Builders<Model.Game>.Update.Set(x => x.ScoreYellow, current.ScoreYellow + amount);
+            }
             
             var result = await _collection.UpdateOneAsync(x => x.Id == current.Id, update);
             return result.IsAcknowledged;

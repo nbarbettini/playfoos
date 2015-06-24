@@ -9,7 +9,8 @@ namespace PlayFoos.API.Communication
     public interface IEngineChannel
     {
         Task TriggerUpdate();
-        //Task Start();
-        //Task Stop();
+        Task StartIfNecessary();
+        Task Stop();
+        bool IsConnected();
     }
 }

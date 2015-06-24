@@ -33,10 +33,13 @@ namespace PlayFoos.API.DependencyResolution
                 // SignalR channels
                 x.For<IClientChannel>()
                     .Use<ClientChannel>()
+                    //.LifecycleIs<StructureMap.Pipeline.ContainerLifecycle>()
                     .Singleton();
                 x.For<IEngineChannel>()
                     .Use<EngineChannel>()
-                    .Ctor<string>("url").Is(Core.Config.EngineChannelUrl);
+                    //.LifecycleIs<StructureMap.Pipeline.ContainerLifecycle>()
+                    .Ctor<string>("url").Is(Core.Config.EngineChannelUrl)
+                    .Singleton();
 
                 // Mongo context
                 x.For<IMongoContext>()

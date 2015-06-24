@@ -18,13 +18,16 @@ namespace PlayFoos.API
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
-            // SignalR for backend communication with engine
-            //EngineChannel.Initialize(Core.Config.EngineChannelUrl);
-            //EngineChannel.Start();
-
             // Set up IOC container
             IOC.Initialize();
             GlobalConfiguration.Configuration.DependencyResolver = new StructureMapDependencyResolver(IOC.Container);
+
+            // Set up dependency for NotifyHub
+            NotifyHub.GameServiceInstance = IOC.Container.GetInstance<Core.Services.IGameService>();
+
+            // Start SignalR communication
+            var engineChannel = IOC.Container.GetInstance<IEngineChannel>();
+            engineChannel.StartIfNecessary();
         }
     }
 }

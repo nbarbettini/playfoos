@@ -114,12 +114,12 @@ namespace PlayFoos.Core.Tests
                 ScoreBlack = 9,
                 ScoreYellow = 11,
                 Started = _fakeClock.Now.AddMinutes(-1), // started 1 minute ago
-                PlayersBlack = new List<PlayerActive>()
+                TeamBlack = new List<PlayerActive>()
                     {
                         new PlayerActive() { Name = "Player1", Rating = 2000},
                         new PlayerActive() { Name = "Player2", Rating = 1900},
                     },
-                PlayersYellow = new List<PlayerActive>()
+                TeamYellow = new List<PlayerActive>()
                     {
                         new PlayerActive() { Name = "Player3", Rating = 1500},
                         new PlayerActive() { Name = "Player4", Rating = 1300},

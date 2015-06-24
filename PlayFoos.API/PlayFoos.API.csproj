@@ -129,7 +129,7 @@
     <Compile Include="Communication\IEngineChannel.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\ScoreController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\AliveController.cs" />
     <Compile Include="DependencyResolution\IOC.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyResolver.cs" />
     <Compile Include="DependencyResolution\StructureMapScope.cs" />

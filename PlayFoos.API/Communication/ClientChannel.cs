@@ -18,7 +18,7 @@ namespace PlayFoos.API.Communication
 
         public async Task BroadcastGameState(Core.Model.Game game)
         {
-            await _hubContext.Clients.All.BroadcastGameState(game);
+            await _hubContext.Clients.All.updateGameState(game);
         }
     }
 }

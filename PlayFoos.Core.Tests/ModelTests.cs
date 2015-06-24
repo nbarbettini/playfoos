@@ -33,7 +33,7 @@ namespace PlayFoos.Core.Tests
         {
             var game = new Game()
             {
-                PlayersBlack = new List<PlayerActive>() { new PlayerActive() { Name = "Jack" } },
+                TeamBlack = new List<PlayerActive>() { new PlayerActive() { Name = "Jack" } },
                 Started = DateTime.Now.AddHours(1)
             };
 

@@ -20,7 +20,7 @@ namespace PlayFoos.Core.Services
 
         public bool ArePlayersValid(Model.Game game)
         {
-            bool hasEnoughPlayers = (game.PlayersBlack.Count == 2 && game.PlayersYellow.Count == 2);
+            bool hasEnoughPlayers = (game.TeamBlack.Count == 2 && game.TeamYellow.Count == 2);
             if (!hasEnoughPlayers)
                 return false;
 
@@ -63,16 +63,16 @@ namespace PlayFoos.Core.Services
 
             if (ArePlayersValid(game))
             {
-                var newRatings = _ratingCalculatorService.CalculateRatingChange(game.PlayersBlack, game.PlayersYellow, blackWon);
+                var newRatings = _ratingCalculatorService.CalculateRatingChange(game.TeamBlack, game.TeamYellow, blackWon);
                 if (newRatings.IsValid())
                 {
-                    foreach (var player in game.PlayersBlack)
+                    foreach (var player in game.TeamBlack)
                     {
                         var historicalPlayer = new Model.PlayerHistorical(player);
                         historicalPlayer.EndRating = newRatings.ForPlayer(player.Id);
                         completed.PlayersBlack.Add(historicalPlayer);
                     }
-                    foreach (var player in game.PlayersYellow)
+                    foreach (var player in game.TeamYellow)
                     {
                         var historicalPlayer = new Model.PlayerHistorical(player);
                         historicalPlayer.EndRating = newRatings.ForPlayer(player.Id);

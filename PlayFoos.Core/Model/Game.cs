@@ -18,26 +18,30 @@ namespace PlayFoos.Core.Model
         [BsonElement("startedAt")]
         public DateTime? Started { get; set; }
 
+        [BsonElement("inVolley")]
+        public bool InVolley { get; set; }
+
         [BsonElement("bScore")]
         public int ScoreBlack { get; set; }
 
         [BsonElement("yScore")]
         public int ScoreYellow { get; set; }
 
-        [BsonElement("bPlayers")]
-        public List<PlayerActive> PlayersBlack { get; set; }
+        [BsonElement("bTeam")]
+        public List<PlayerActive> TeamBlack { get; set; }
 
-        [BsonElement("yPlayers")]
-        public List<PlayerActive> PlayersYellow { get; set; }
+        [BsonElement("yTeam")]
+        public List<PlayerActive> TeamYellow { get; set; }
 
         // Default constructor
         public Game()
         {
             Id = Guid.NewGuid();
             Created = DateTime.Now;
+            InVolley = true;
 
-            PlayersBlack = new List<PlayerActive>();
-            PlayersYellow = new List<PlayerActive>();
+            TeamBlack = new List<PlayerActive>();
+            TeamYellow = new List<PlayerActive>();
         }
 
         #region IEquatable
@@ -82,10 +86,11 @@ namespace PlayFoos.Core.Model
                 Id = this.Id,
                 Created = this.Created,
                 Started = this.Started,
+                InVolley = this.InVolley,
                 ScoreBlack = this.ScoreBlack,
                 ScoreYellow = this.ScoreYellow,
-                PlayersBlack = this.PlayersBlack.DeepClone(),
-                PlayersYellow = this.PlayersYellow.DeepClone()
+                TeamBlack = this.TeamBlack.DeepClone(),
+                TeamYellow = this.TeamYellow.DeepClone()
             };
         }
 
@@ -109,10 +114,11 @@ namespace PlayFoos.Core.Model
                 x.Id == y.Id &&
                 x.Created == y.Created &&
                 x.Started == y.Started &&
+                x.InVolley == y.InVolley &&
                 x.ScoreBlack == y.ScoreBlack &&
                 x.ScoreYellow == y.ScoreYellow &&
-                x.PlayersBlack.SafeSequenceEqual(y.PlayersBlack) &&
-                x.PlayersYellow.SafeSequenceEqual(y.PlayersYellow);
+                x.TeamBlack.SafeSequenceEqual(y.TeamBlack) &&
+                x.TeamYellow.SafeSequenceEqual(y.TeamYellow);
             return result;
         }
 
@@ -125,10 +131,11 @@ namespace PlayFoos.Core.Model
                 .Hash(obj.Id)
                 .Hash(obj.Created)
                 .Hash(obj.Started)
+                .Hash(obj.InVolley)
                 .Hash(obj.ScoreBlack)
                 .Hash(obj.ScoreYellow)
-                .Hash(obj.PlayersBlack)
-                .Hash(obj.PlayersYellow);
+                .Hash(obj.TeamBlack)
+                .Hash(obj.TeamYellow);
         }
     }
 

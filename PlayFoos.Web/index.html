@@ -1,28 +1,124 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" data-ng-app="playfoosApp">
 <head>
-    <title>PlayFoos Web Client Test</title>
-    <script src="Scripts/jquery-1.6.4.min.js"></script>
-    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
-    <script src="http://localhost/playfoos/api/signalr/hubs"></script>
-</head>
-<body>
-    <div id="state">
-        <div>Game ID: <span id="gameId"></span></div>
-        <div><span id="started">Game is not started</span></div>
-        <div>Starting at: <span id="startTime"></span></div>
-    </div>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <script>
-        var updateHubProxy = $.connection.gameStateHub;
-        updateHubProxy.client.updateGameState = function (state) {
-            console.log(state);
-            $('#gameId').text(state.Id);
-            $('#started').text(state.Started);
-            $('#startTime').text(state.StartTime);
-        };
-        $.connection.hub.start()
-            .done(function () { console.log('Connected! ID=' + $.connection.hub.id); });
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet" />
+
+    <title>PlayFoos!</title>
+
+    <style>
+        body { padding-top: 70px; }
+
+        .scorecard {
+            margin-bottom: 5px;
+        }
+        .scorecard p {
+            font-size: 60px;
+            text-align: center;
+        }
+        .scorecard-black {
+            background-color: black;
+            color: white;
+        }
+        .scorecard-yellow {
+            background-color: yellow;
+            color: black;
+        }
+        .control-icon {
+            font-size: 30px;
+            margin-left: 47%;
+        }
+    </style>
+</head>
+
+<body data-ng-controller="scoreboardController as vm">
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">
+                    Play Foosball 
+                    <span class="glyphicon glyphicon-link" 
+                          data-ng-class="{ 'text-success': vm.connected(), 'text-danger': !vm.connected() }"></span>
+                </a>
+                <button type="button" class="btn btn-success navbar-btn navbar-right">New Game</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-xs-6">
+                            <a href="#" data-ng-click="vm.increaseScore(0)">
+                                <span class="glyphicon glyphicon-triangle-top control-icon"></span>
+                            </a>
+                            <div class="panel panel-default scorecard scorecard-black">
+                                <div class="panel-body">
+                                    <p>{{vm.getBlackScore()}}</p>
+                                </div>
+                            </div>
+                            <a href="#" data-ng-click="vm.decreaseScore(0)">
+                                <span class="glyphicon glyphicon-triangle-bottom control-icon"></span>
+                            </a>
+                        </div>
+                        <div class="col-xs-6">
+                            <a href="#" data-ng-click="vm.increaseScore(1)">
+                                <span class="glyphicon glyphicon-triangle-top control-icon"></span>
+                            </a>
+                            <div class="panel panel-default scorecard scorecard-yellow">
+                                <div class="panel-body">
+                                    <p>{{vm.getYellowScore()}}</p>
+                                </div>
+                            </div>
+                            <a href="#" data-ng-click="vm.decreaseScore(1)">
+                                <span class="glyphicon glyphicon-triangle-bottom control-icon"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div> <!-- /container -->
+    <!-- 3rd party libraries-->
+    <script src="Scripts/jquery-2.1.4.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/angular-signalr-hub.min.js"></script>
+
+    <!-- App scripts -->
+    <script src="app/app.js"></script>
+    <script src="app/GameState.js"></script>
+    <script src="app/ServerConnection.js"></script>
+    <script src="app/scoreboardController.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script style="display:none">
+        (function () {
+            'use strict';
+
+            if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+                var msViewportStyle = document.createElement('style')
+                msViewportStyle.appendChild(
+                  document.createTextNode(
+                    '@-ms-viewport{width:auto!important}'
+                  )
+                )
+                document.querySelector('head').appendChild(msViewportStyle)
+            }
+
+        })();
     </script>
 </body>
 </html>

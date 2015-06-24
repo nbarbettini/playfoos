@@ -46,25 +46,40 @@ namespace PlayFoos.API.Communication
 
         public async Task TriggerUpdate()
         {
-            await EnsureAlive();
+            await StartIfNecessary();
 
-            await _hub.Invoke("Update");
+            try
+            {
+                await _hub.Invoke("Update");
+            }
+            catch (Exception e)
+            {
+                // log and swallow
+            }
         }
 
-        private async Task EnsureAlive()
+        public async Task StartIfNecessary()
         {
-            if (_connection.State == ConnectionState.Disconnected)
-                await _connection.Start();
+            try
+            {
+                if (_connection.State == ConnectionState.Disconnected)
+                    await _connection.Start();
+            }
+            catch (Exception e)
+            {
+                // log and swallow
+                // TODO
+            }
         }
 
-        //public async Task Start()
-        //{
-        //    await _connection.Start();
-        //}
+        public async Task Stop()
+        {
+            _connection.Stop();
+        }
 
-        //public async Task Stop()
-        //{
-        //    _connection.Stop();
-        //}
+        public bool IsConnected()
+        {
+            return (_connection.State == ConnectionState.Connected);
+        }
     }
 }
